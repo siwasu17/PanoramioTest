@@ -3,7 +3,7 @@ package com.example.yasu.panoramiotest;
 import android.content.Context;
 import android.os.AsyncTask;
 
-public class PanoramioAPITask extends AsyncTask<String,Void,PhotoResult> {
+public class PanoramioAPITask extends AsyncTask<Double,Void,PhotoResult> {
     private final Context context;
     Exception exception;
 
@@ -12,9 +12,9 @@ public class PanoramioAPITask extends AsyncTask<String,Void,PhotoResult> {
     }
 
     @Override
-    protected PhotoResult doInBackground(String... params) {
+    protected PhotoResult doInBackground(Double... params) {
         try{
-            return PanoramioAPI.getPhotos(context);
+            return PanoramioAPI.getPhotos(context,params);
         }catch(Exception e){
             exception = e;
         }
