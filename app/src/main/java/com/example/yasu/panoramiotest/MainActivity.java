@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     private Boolean reverseFlag = false;
     private Double currentLat;
     private Double currentLn;
+    private ProgressBar progress;
 
     // GPS用
     private LocationManager manager = null;
@@ -37,11 +39,19 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected void onPostExecute(PhotoResult data) {
             super.onPostExecute(data);
 
             //データ取得APIの処理が終わったら情報をViewへ表示する
             if(data != null){
+                progress.setVisibility(View.GONE);
                 //一旦いまあるやつ消す
                 photosLayout.removeAllViews();
                 for(PhotoResult.Photo p : data.photoList){
@@ -72,6 +82,7 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        progress = (ProgressBar)findViewById(R.id.progress);
         photosLayout = (LinearLayout)findViewById(R.id.ll_photos);
         reverseBtn = (Button)findViewById(R.id.btn_reverse);
         reverseBtn.setOnClickListener(new View.OnClickListener(){
