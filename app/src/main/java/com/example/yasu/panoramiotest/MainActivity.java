@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements LocationListener{
     private LinearLayout photosLayout;
+    private Button reverseBtn;
+    private Boolean reverseFlag = false;
+    private Double currentLat;
+    private Double currentLn;
 
     // GPS用
     private LocationManager manager = null;
@@ -68,12 +73,26 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         setContentView(R.layout.activity_main);
 
         photosLayout = (LinearLayout)findViewById(R.id.ll_photos);
+        reverseBtn = (Button)findViewById(R.id.btn_reverse);
+        reverseBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(reverseFlag){
+                    reverseBtn.setText("南半球へ");
+                    reverseFlag = false;
+                }else{
+                    reverseBtn.setText("北半球へ");
+                    reverseFlag = true;
+                }
+                updatePhoto();
+            }
+        });
 
         //位置情報取得
         manager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsFlg = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        boolean gpsFlag = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if(gpsFlg) {
+        if(gpsFlag) {
             System.out.println("GET LOCATION STATUS OK");
         }
     }
@@ -123,7 +142,10 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
         Double ln = location.getLongitude();
         System.out.println("LAT: " + lat.toString() + " LONG: " + ln.toString());
 
-        new GetPhotoResultTask(this).execute(lat,ln);
+        currentLat = lat;
+        currentLn = ln;
+
+        updatePhoto();
     }
 
     @Override
@@ -139,5 +161,16 @@ public class MainActivity extends ActionBarActivity implements LocationListener{
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
+    }
+
+
+    public void updatePhoto(){
+        if(reverseFlag){
+            //裏面
+            new GetPhotoResultTask(this).execute(-currentLat,currentLn,0.5);
+        }else{
+            //表面
+            new GetPhotoResultTask(this).execute(currentLat,currentLn,0.002);
+        }
     }
 }

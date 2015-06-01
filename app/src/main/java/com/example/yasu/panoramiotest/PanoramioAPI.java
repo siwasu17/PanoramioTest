@@ -24,7 +24,10 @@ public class PanoramioAPI {
         //引数の緯度経度取得
         Double lat = latln[0];
         Double ln = latln[1];
-        Double offset = 0.002;
+        //最後の引数に緯度経度をどのくらいオフセットするかを渡す
+        Double offset = latln[2];
+        //Double offset = 0.002;
+        //Double offset = 0.5;
         String rangeParam = "&minx=" + (ln - offset)
                 + "&miny=" + (lat - offset)
                 + "&maxx=" + (ln + offset)
